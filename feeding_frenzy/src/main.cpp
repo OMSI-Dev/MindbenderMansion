@@ -16,6 +16,13 @@ NOTES:
 #include <Bounce2.h>
 #include <Timer.h>
 
+unsigned long trayScanTimer = 0;
+int trayScanDuration = 3000; // milliseconds
+bool scanningTrayItems = false;
+int scoreSentCooldown = false;
+int scoreSentCooldownDuration = 2000; // milliseconds
+unsigned long scoreSentTimer = 0;
+
 MoToTimer HeartBeat;
 //instinalize button pins  
 #define slow_pin 11
@@ -44,12 +51,26 @@ const int buttonSlowLight = 5;
 const int  buttonMediumLight = 4;
 const int buttonFastLight = 8;
 
+int tray = 0;
+int potatoes = 0;
+int peas = 0;
+int pie = 0;
+int corn = 0;
+int meat = 0;
+
 int pin1 = 0;
 int pin2 = 0;
 int pin3 = 0;
 int pin4 = 0;
 int pin5 = 0;
 int pin6 = 0;
+
+int lastpin1 = 0;
+int lastpin2 = 0;
+int lastpin3 = 0;
+int lastpin4 = 0;
+int lastpin5 = 0;
+int lastpin6 = 0;
 
 int counting = 0;
 int sendToPcX = 0;
@@ -294,16 +315,114 @@ analogWrite(topMotor, topMotorSpeed);
   //reed switch trips to ground and sensor reads low
   
   
-  pin1 = digitalRead(tray_pin);  //sensor
-  pin2 = digitalRead(peas_pin);  //peas
-  pin3 = digitalRead(meat_pin);  //meat
-  pin4 = digitalRead(corn_pin);  //corn
-  pin5 = digitalRead(pie_pin);  //pie
-  pin6 = digitalRead(potatoes_pin);  //potatoes
+  lastpin1 = pin1;
+  lastpin2 = pin2;
+  lastpin3 = pin3;
+  lastpin4 = pin4;
+  lastpin5 = pin5;
+  lastpin6 = pin6;
+  // int tray = pin1 = digitalRead(tray_pin);  //sensor
+  // int peas = pin2 = digitalRead(peas_pin);  //peas
+  // int meat = pin3 = digitalRead(meat_pin);  //meat
+  // int corn = pin4 = digitalRead(corn_pin);  //corn
+  // int pie = pin5 = digitalRead(pie_pin);  //pie
+  // int potatoes = pin6 = digitalRead(potatoes_pin);  //potatoes
+  
+  // the reed sensors return LOW (0) for active and HIGH (1) for inactive
+  // so the digitalRead is negated
+  if(!digitalRead(tray_pin)) {
+    tray = 1;
+  }
+  if(!digitalRead(peas_pin)) {
+    peas = 1;
+  }
+  if(!digitalRead(meat_pin)) {
+    meat = 1;
+  }
+  if(!digitalRead(corn_pin)) {
+    corn = 1;
+  }
+  if(!digitalRead(pie_pin)) {
+    pie = 1;
+  }
+  if(!digitalRead(potatoes_pin)) {
+    potatoes = 1;
+  }
+  
+  if(pin1 != lastpin1) {
 
+  Serial.print("tray: ");
+  Serial.println(pin1);
+  }
+  if(pin2 != lastpin2) {
+
+  Serial.print("peas: ");
+  Serial.println(pin2);
+  }
+  if(pin3 != lastpin3) {
+
+  Serial.print("meat: ");
+  Serial.println(pin3);
+  }
+  if(pin4 != lastpin4) {
+
+  Serial.print("corn: ");
+  Serial.println(pin4);
+  }
+  if(pin5 != lastpin5) {
+
+  Serial.print("pie: ");
+  Serial.println(pin5);
+  }
+  if(pin6 != lastpin6) {
+
+  Serial.print("potatoes: ");
+  Serial.println(pin6);
+  }
+
+  // read tray pin1
+  // start cool down
+  // gather all the all pins
+  // cooldown is over
+  // assess if all pins were gathered
+  // give out score
+
+  if(tray == 1 && scanningTrayItems == false) { // start scanning tray
+    scanningTrayItems = true;
+    trayScanTimer = millis();
+  }
+  if(scanningTrayItems && millis() - trayScanTimer > trayScanDuration) {
+    // time up 
+    scanningTrayItems = false;
+    peas = 0;
+    meat = 0;
+    corn = 0;
+    pie = 0;
+    potatoes = 0;
+  }
+  if (scanningTrayItems) {
+    // check if score has already been sent for this tray
+    if(!scoreSentCooldown) { 
+      if (peas && meat && corn && pie && potatoes) {
+        Serial1.println("S5"); // send full tray detected signal
+        Serial.println("score sent to pc software"); // debug message
+        scoreSentCooldown = true;
+        scoreSentTimer = millis(); // start cooldown timer
+      }
+    } else {
+      if(millis() - scoreSentTimer > scoreSentCooldownDuration) {
+        scoreSentCooldown = false;
+        Serial.println("scoreSentCooldown reset"); // debug message
+      }
+    }
+  } // end scanningTrayItems if
+
+
+/*
   //PIN 1 is the sensor PIN
   
   if(pin1 == 0) 
+  // Serial.println("tray pin triggered!");
     {  //--------------SENSOR PIN has tripped low.... start looking for food pieces
     startSensing = currentMillis;
     sensor = 1;   //----------------flag for sensor pin
@@ -344,6 +463,8 @@ analogWrite(topMotor, topMotorSpeed);
     pieHold = 0;
     peasHold = 0;
     }
+
+    */
   
 
 }
