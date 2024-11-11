@@ -1,0 +1,21 @@
+Functional host app can be found on the google drive.
+Location: 2024 -> Mindbender Mansion -> MBM GAME - Works -.7z
+
+Configs:
+points: 10
+    This has to be 10, game visuals are hardcoded to 10 & will prevent a win
+time: 00:02:00
+Simulated Hardware: False
+ImiditelyStartHostSpecificGame: True (This boots based on Computername)
+Kitchen COMPort: COM5
+
+
+Device Manager ports:
+Silicon Labs (UART) = COM5
+ItsyBitsy(Arduino) = COM9
+
+**Extra Info**
+
+If the configs are not staying, you need to enter appData(Hidden User Folder)/Local
+
+and delete the file stored there. Restarting the software will generate a new file based on the settings.
