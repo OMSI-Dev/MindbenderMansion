@@ -295,7 +295,7 @@ if (Serial1.available() > 0) {
 
 //********************************************* emergency stop button
 
-if(eStop.fell() || BeamFlag == HIGH){   
+if(eStop.fell()){   
   if(holdUntillReset == 0){             
   Serial1.println("G");
   holdUntillReset = 1;}
