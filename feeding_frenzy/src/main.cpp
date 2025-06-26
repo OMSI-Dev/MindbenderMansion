@@ -30,7 +30,7 @@ MoToTimer HeartBeat;
 #define fast_pin 9
 #define eStop_pin 12
 #define beamStop 13
-boolean BeamFlag = 0;
+//boolean BeamFlag = 0;
 Bounce slow = Bounce();
 Bounce medium = Bounce();
 Bounce fast = Bounce();
@@ -166,7 +166,7 @@ slow.update();
 medium.update();
 fast.update();
 eStop.update();
-BeamFlag = digitalRead(beamStop);    
+//BeamFlag = digitalRead(beamStop);    
     
 if(sendToPcX == 1){    //not sure how often the PC wants to see this 'X' but we send it a few times
   Serial1.println("X");
@@ -294,7 +294,7 @@ if (Serial1.available() > 0) {
   }
 
 //********************************************* emergency stop button
-
+//Removed Beam Break
 if(eStop.fell()){   
   if(holdUntillReset == 0){             
   Serial1.println("G");

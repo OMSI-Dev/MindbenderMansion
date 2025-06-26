@@ -1,3 +1,32 @@
+6/26/25 Tech Visit Todo List
+
+Feeding Frenzy: 
+Get motor moving
+Remove E-Stop beam break completely 
+	Bring it back to OMSI (old & new)
+Check 12v line for button LEDs
+Check reed switches
+Check Arduino & upload adjusted code (github) 
+	verify code - Mainly want to remove the beam break from the code.
+Examine relay - looked jank in video call
+Wire management
+
+Tilt Table:
+Check tilt table for return issue
+We sent replacement 3D printed return shaft
+They have spare solenoids
+
+
+All:
+Full examination 
+Do a quick one over of earthing else.
+
+
+
+
+
+Last Tech Visit 
+________________________________________________________________________________________________________________________________
 Functional host app can be found on the google drive.
 Location: 2024 -> Mindbender Mansion -> MBM GAME - Works -.7z
 
@@ -10,7 +39,7 @@ ImiditelyStartHostSpecificGame: True (This boots based on Computername)
 Kitchen COMPort: COM5
 
 
-Device Manager ports:
+Device Manager ports:1
 Silicon Labs (UART) = COM5
 ItsyBitsy(Arduino) = COM9
 
