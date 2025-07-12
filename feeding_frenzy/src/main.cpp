@@ -120,24 +120,24 @@ pinMode(buttonFastLight, OUTPUT);
   
 }
 
-bool on;
+// bool on;
 
-void hearttick()
-{
-  if(!HeartBeat.running())
-  {
-    digitalWrite(13,on);
-    on = !on;
-    HeartBeat.setTime(1000);
-  }
-}
+// void hearttick()
+// {
+//   if(!HeartBeat.running())
+//   {
+//     digitalWrite(13,on);
+//     on = !on;
+//     HeartBeat.setTime(1000);
+//   }
+// }
 
 
 //--------------------------------------------------------START LOOP
 
 void loop()                     
 {
-  hearttick();
+  // hearttick();
 unsigned long currentMillis = millis();
 
 //updates buttons status
