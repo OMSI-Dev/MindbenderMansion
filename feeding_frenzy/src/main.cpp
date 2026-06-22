@@ -23,18 +23,25 @@ int scoreSentCooldown = false;
 int scoreSentCooldownDuration = 2000; // milliseconds
 unsigned long scoreSentTimer = 0;
 
-MoToTimer HeartBeat;
+MoToTimer buttonLock;
 //instinalize button pins  
-#define slow_pin 11
+#define slow_pin 9
 #define medium_pin 10
-#define fast_pin 9
+#define fast_pin 11
+
 #define eStop_pin 12
 #define beamStop 13
 //boolean BeamFlag = 0;
-Bounce slow = Bounce();
-Bounce medium = Bounce();
-Bounce fast = Bounce();
-Bounce eStop = Bounce();
+// Bounce slow = Bounce();
+// Bounce medium = Bounce();
+// Bounce fast = Bounce();
+// Bounce eStop = Bounce();
+
+Bounce2::Button slow = Bounce2::Button();
+Bounce2::Button medium = Bounce2::Button();
+Bounce2::Button fast = Bounce2::Button();
+Bounce2::Button eStop = Bounce2::Button();
+
 //Bounce beamStop = Bounce();
 
 //Define Reed switch pins
@@ -126,13 +133,20 @@ pinMode(potatoes_pin, INPUT);
 
 //Button Attachment and debouncing value
 slow.attach(slow_pin);
-slow.interval(50);
+slow.setPressedState(LOW);
+slow.interval(5);
+
 medium.attach(medium_pin);
-medium.interval(50);
+medium.interval(5);
+medium.setPressedState(LOW);
+
 fast.attach(fast_pin);
-fast.interval(50);
+fast.interval(5);
+fast.setPressedState(LOW);
+
 eStop.attach(eStop_pin);
-eStop.interval(50);
+eStop.interval(5);
+eStop.setPressedState(LOW);
 
   
 pinMode(buttonSlowLight, OUTPUT);
@@ -158,10 +172,10 @@ pinMode(buttonFastLight, OUTPUT);
 
 void loop()                     
 {
-  // hearttick();
-unsigned long currentMillis = millis();
 
-//updates buttons status
+ // hearttick();
+
+ //updates buttons status
 slow.update();
 medium.update();
 fast.update();
@@ -224,9 +238,10 @@ if (Serial1.available() > 0) {
 
   if(gameReset == 1){                
    
-  if(slow.fell()){                      //------------------- SLOW Button is pressed
+  if(slow.isPressed() && !buttonLock.running()){                      //------------------- SLOW Button is pressed
     Serial1.println("S");
     Serial.println("slow");
+    buttonLock.setTime(400);
   if(holdUntillReset == 0){             //Emergency Stop button was previously pressed.... .. and now we're ready to play
     gameReset = 0;                       //holds the game at the current speed untill the PC sends a T (resets game) or e-stop button is pressed
     digitalWrite(buttonSlowLight, HIGH);
@@ -247,9 +262,11 @@ if (Serial1.available() > 0) {
   sendToPcX = 1; 
    }
   
-  if(medium.fell()){     //------------------- MEDIUM Button is pressed
+  if(medium.isPressed() && !buttonLock.running()){     //------------------- MEDIUM Button is pressed
                          
   Serial1.println("M");
+  Serial.println("Medium");
+  buttonLock.setTime(400);
   if(holdUntillReset == 0){                   //Emergency Stop button was previously pressed.... .. and now we're ready to play
     gameReset = 0;                               //holds the game at the current speed untill the PC sends a T (resets game) or e-stop button is pressed  
     digitalWrite(buttonSlowLight, LOW);
@@ -270,8 +287,10 @@ if (Serial1.available() > 0) {
   sendToPcX = 1;
   }
   //---------------------------------------FAST Button is pressed
-  if(fast.fell()){
+  if(fast.isPressed() && !buttonLock.running()){
   Serial1.println("F");
+  Serial.println("fast");
+  buttonLock.setTime(400);
   if(holdUntillReset == 0){                  //Emergency Stop button was previously pressed.... .. and now we're ready to play
     gameReset = 0;                          //holds the game at the current speed untill the PC sends a T (resets game) or e-stop button is pressed
     digitalWrite(buttonSlowLight, LOW);
@@ -295,9 +314,11 @@ if (Serial1.available() > 0) {
 
 //********************************************* emergency stop button
 //Removed Beam Break
-if(eStop.fell()){   
+if(eStop.isPressed()  && !buttonLock.running() ){   
   if(holdUntillReset == 0){             
   Serial1.println("G");
+  Serial.println("Stop");
+  buttonLock.setTime(400);
   holdUntillReset = 1;}
   gameReset = 1;
   digitalWrite(buttonSlowLight, LOW);
